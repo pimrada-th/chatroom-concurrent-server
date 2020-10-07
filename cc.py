@@ -7,7 +7,6 @@ def menulist():
         ******** Welcome to Mara's Chatroom ********
             These are command that you can use in Chatroom
             #show or #s- for show all online users
-
             #chatroom - back to chatroom
             #help or #h - show all menu
             #exit or #e- exit from this Chatroom
