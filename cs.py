@@ -1,5 +1,5 @@
 #Coded by Yashraj Singh Chouhan
-import socket, threading                                                #Libraries import
+import socket, threading, datetime, pickle                                                #Libraries import
 
 host = '127.0.0.1'                                                      #LocalHost
 port = 8899                                                            #Choosing unreserved port
@@ -10,8 +10,10 @@ server.listen()
 
 location = (host, port)
 checkstatus = server.connect_ex(location)                               #check that port is using or not
+date = datetime.datetime.now()
 if checkstatus != 0:
-    print ("Chat room server is working!")
+    print(date.strftime("%c"))
+    print ("Mara's Chatroom server is working!")
     print("Waiting for connecting\n")
 else:
     print('Sorry! Server can not run\n')
@@ -42,7 +44,28 @@ def handle(user):
             if msg=='#exit':
                 removeuser(user)
                 break
-            
+            elif msg=='#show':
+                #listnames = pickle.dumps(nicknames)
+                #user.send(pickle.loads(nicknames).encode('utf-8'))
+                listnames = "\n".join(nicknames)
+                user.send(listnames.encode('utf-8'))
+                thread = threading.Thread(target=handle, args=(user,))
+                thread.start()
+                #listnames = pickle.dumps(nicknames)
+                #user.send('SHOW'.encode('utf-8'))
+                #user.send(listnames.encode('utf-8'))
+                #listnames = str(nicknames)
+                #listnames = listnames.encode('utf-8')
+                
+                #user.send('SHOW'.encode('utf-8'))
+                #user.send(str(nicknames).encode('utf-8'))
+                #user.send('SHOW'.encode('utf-8'))
+                #user.sendto(pickle.dumps(nicknames),user)
+                #user.send('NICKNAME'.encode('utf-8'))
+                #nickname = user.recv(1024).decode('utf-8')
+                #shownames = nicknames
+                #user.send('ok')
+                break
             else:
                 broadcast(message)
                 print(str(message, 'utf-8')) #convert byte tostring   
@@ -58,28 +81,17 @@ def acceptuser():
             nickname = user.recv(1024).decode('utf-8')
             nicknames.append(nickname)
             users.append(user)
-            print("Nickname : {} ".format(nickname))                        #send in server
+            print("\nNickname : {} ".format(nickname))                        #send in server
             print("Connected with {}\n".format(str(address)))               #send in server
+            user.send('Connected to server! Let\'s chat!'.encode('utf-8'))  #send for user
             broadcast("{} joined!".format(nickname).encode('utf-8'))        #brodcast to all users
-            #user.send('Connected to server! Let\'s chat!'.encode('utf-8'))  #send msg for user
-            menulist(user)
             thread = threading.Thread(target=handle, args=(user,))
             thread.start()
     except socket.error:
         print("Shutting down")
     finally:
-        user.close()
+        user.close() 
 
-def menulist(user):
-    message = """******** Welcome to Mara's Chatroom ********
-            This is command that you can use in Chatroom
-            #help - show all menu
-            #show - for show all online users
-            #exit - exit from this Chatroom
-        ******** Hope you enjoy with my program! ********""".encode('utf-8') #Correct place!! of encode
-    user.send(message)
-
-        
 acceptuser()
 
 
