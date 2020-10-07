@@ -1,4 +1,3 @@
-#Coded by Yashraj Singh Chouhan
 import socket, threading, sys, datetime
 
 date = datetime.datetime.now()

@@ -1,4 +1,3 @@
-#Coded by Yashraj Singh Chouhan
 import socket, threading, datetime,logging                                          #Libraries import
 
 host = '127.0.0.1'                                                      #LocalHost
