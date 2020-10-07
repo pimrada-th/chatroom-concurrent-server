@@ -7,7 +7,6 @@ def menulist():
         ******** Welcome to Mara's Chatroom ********
             These are command that you can use in Chatroom
             #show or #s- for show all online users
-            #chatroom - back to chatroom
             #help or #h - show all menu
             #exit or #e- exit from this Chatroom
         ******** Hope you enjoy with my program! ********""")
@@ -57,7 +56,6 @@ def write():
             receive_thread = threading.Thread(target=receive)                  #sending messages 
             receive_thread.start()   
     
-
         elif typing == '#show' or typing == '#s': 
             user.send('#show'.encode('utf-8'))
             print("--- Online Users ---")
