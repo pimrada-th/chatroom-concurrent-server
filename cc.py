@@ -12,21 +12,6 @@ def receive():
             message = user.recv(1024).decode('utf-8')
             if message == 'NICKNAME': #ส่งแชทส่วนตัว
                 user.send(nickname.encode('utf-8'))
-            #elif message == '#exit' :
-                #check = input('Do you want to exit this chat room? (y,Y = yes, anything = no): ')
-                #if(check=='y' or check == 'Y' ): 
-                    #user.send('#exit'.encode('utf-8'))         #ถ้าไม่มีมันจะไม่หยุดทำงงาน
-                    #user.close()
-                    #print("You left from chatroom") 
-                    #break
-                #else:
-                    #print("You back to chat room") 
-                    #write_thread = threading.Thread(target=write)                   #sending messages 
-                    #write_thread.start()         
-            #elif message == '#help' :
-                #user.send('#help'.encode('utf-8'))
-                #write_thread = threading.Thread(target=write)                   #sending messages 
-                #write_thread.start() ##
             else:
                 print(message)        
         except :    #case on wrong ip/port details
@@ -48,18 +33,10 @@ def write():
                 print("You back to chat room") 
                 receive_thread = threading.Thread(target=receive)                  #sending messages 
                 receive_thread.start()     
-        #elif typing=='#help':    
-            #user.send(typing.encode('utf-8'))                        
+                  
         else:
             message = '{}0: {}'.format(nickname, typing)          #message layout
             user.send(message.encode('utf-8'))   
-        #if typing !='#exit' or typing !='#help' or typing !='#show':
-            #message = '{}: {}'.format(nickname, typing)          #message layout
-            #user.send(message.encode('utf-8')) 
-        #else:
-            #user.send(typing.encode('utf-8'))          
-
-#def checkexit(user):
 
 
 receive_thread = threading.Thread(target=receive)               #receiving multiple messages

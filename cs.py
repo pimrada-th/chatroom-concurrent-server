@@ -24,18 +24,15 @@ def broadcast(message):                                                 #broadca
     for user in users:
         user.send(message) 
 
-def menu(message,user):
-    if message == '#exit':
-        #index = users.index(user)
-        #users.remove(user)
-        #user.close()
-        #broadcast('{} left!\n'.format(nickname).encode('utf-8'))
-        #nickname = nicknames[index]
-        #words = '{} disconnected!\n'.format(nickname).encode('utf-8')
-        #print(str(words, 'utf-8')) #convert byte tostring
-        #nicknames.remove(nickname)
-        print('got it')
-        
+def removeuser(user):
+    index = users.index(user)
+    users.remove(user)
+    user.close()
+    nickname = nicknames[index]
+    words = '{} disconnected!\n'.format(nickname).encode('utf-8')
+    print(str(words, 'utf-8')) #convert byte tostring
+    broadcast('{} left!\n'.format(nickname).encode('utf-8'))
+    nicknames.remove(nickname)       
 
 def handle(user):                                         
     while True:
@@ -45,50 +42,14 @@ def handle(user):
             #menu(message,user)
             msg = (str(message, 'utf-8'))  
             if msg=='#exit':
-                index = users.index(user)
-                users.remove(user)
-                user.close()
-                nickname = nicknames[index]
-                words = '{} disconnected!\n'.format(nickname).encode('utf-8')
-                print(str(words, 'utf-8')) #convert byte tostring
-                broadcast('{} left!\n'.format(nickname).encode('utf-8'))
-                nicknames.remove(nickname)
+                removeuser(user)
                 break
+            
             else:
                 broadcast(message)
                 print(str(message, 'utf-8')) #convert byte tostring   
-                                   
-            #if message == '#exit':
-                #index = users.index(user)
-                #users.remove(user)
-                #user.close()
-                #nickname = nicknames[index]
-                #broadcast('{} left!\n'.format(nickname).encode('utf-8'))
-                #words = '{} disconnected!\n'.format(nickname).encode('utf-8')
-                #print(str(words, 'utf-8')) #convert byte tostring
-                #nicknames.remove(nickname)
-                #break
-            
-            #if message == '#help':
-                #message = """******** Welcome to Mara's Chatroom ********
-                        #This is command that you can use in Chatroom
-                        #help - show all menu
-                        #show - for show all online users
-                        #exit - exit from this Chatroom
-                    #******** Hope you enjoy with my program! ********""".encode('utf-8')
-                #user.send(message)
-            #else:
-            #broadcast(message)
-            
         except:                                                         #ex. user closed window
-            index = users.index(user)
-            users.remove(user)
-            user.close()
-            nickname = nicknames[index]
-            words = '{} disconnected!\n'.format(nickname).encode('utf-8')
-            print(str(words, 'utf-8')) #convert byte tostring
-            broadcast('{} left!\n'.format(nickname).encode('utf-8'))
-            nicknames.remove(nickname)
+            removeuser(user)
             break
 
 def acceptuser():   
@@ -110,16 +71,6 @@ def acceptuser():
         print("Shutting down")
     finally:
         user.close()
-
-def removeuser(user):
-    index = users.index(user)
-    users.remove(user)
-    user.close()
-    nickname = nicknames[index]
-    words = '{} disconnected!\n'.format(nickname).encode('utf-8')
-    print(str(words, 'utf-8')) #convert byte tostring
-    broadcast('{} left!\n'.format(nickname).encode('utf-8'))
-    nicknames.remove(nickname)
 
 def menulist(user):
     message = """******** Welcome to Mara's Chatroom ********
