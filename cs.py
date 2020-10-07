@@ -38,8 +38,6 @@ def handle(user):
     while True:
         try:    
             message = user.recv(1024) #recieving valid messages from user
-            #broadcast(message)  
-            #menu(message,user)
             msg = (str(message, 'utf-8'))  
             if msg=='#exit':
                 removeuser(user)
