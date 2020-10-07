@@ -1,5 +1,5 @@
 #Coded by Yashraj Singh Chouhan
-import socket, threading, sys, datetime, pickle
+import socket, threading, sys, datetime
 
 date = datetime.datetime.now()
 timenow = date.strftime('%X')
@@ -33,12 +33,6 @@ def receive():
             message = user.recv(1024).decode('utf-8')
             if message == 'NICKNAME': #ถ้า NICKNAME ตรงก็ให้ส่งชื่อไปที่เซิฟ
                 user.send(nickname.encode('utf-8')) #send nick name
-            #elif message == 'SHOW':
-                #listnames = pickle.loads(message)
-                #listnames = eval(message)
-                #print('Online users now : '+listnames)
-                #receive_thread = threading.Thread(target=receive) 
-                #receive_thread.start()  
             else:
                 print(message)        
         except :    #case on wrong ip/port details

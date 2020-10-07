@@ -1,5 +1,5 @@
 #Coded by Yashraj Singh Chouhan
-import socket, threading, datetime, pickle                                                #Libraries import
+import socket, threading, datetime                                          #Libraries import
 
 host = '127.0.0.1'                                                      #LocalHost
 port = 8899                                                            #Choosing unreserved port
@@ -45,26 +45,10 @@ def handle(user):
                 removeuser(user)
                 break
             elif msg=='#show':
-                #listnames = pickle.dumps(nicknames)
-                #user.send(pickle.loads(nicknames).encode('utf-8'))
                 listnames = "\n".join(nicknames)
                 user.send(listnames.encode('utf-8'))
                 thread = threading.Thread(target=handle, args=(user,))
                 thread.start()
-                #listnames = pickle.dumps(nicknames)
-                #user.send('SHOW'.encode('utf-8'))
-                #user.send(listnames.encode('utf-8'))
-                #listnames = str(nicknames)
-                #listnames = listnames.encode('utf-8')
-                
-                #user.send('SHOW'.encode('utf-8'))
-                #user.send(str(nicknames).encode('utf-8'))
-                #user.send('SHOW'.encode('utf-8'))
-                #user.sendto(pickle.dumps(nicknames),user)
-                #user.send('NICKNAME'.encode('utf-8'))
-                #nickname = user.recv(1024).decode('utf-8')
-                #shownames = nicknames
-                #user.send('ok')
                 break
             else:
                 broadcast(message)
