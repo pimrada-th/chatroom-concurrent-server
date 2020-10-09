@@ -16,7 +16,7 @@ def menulist():
 menulist()
 while True:
     nickname = input("What's your Nickname?: ")
-    if nickname == '#show' or nickname == '#s' or nickname == '#help' or nickname == '#h' or nickname == '#show' or nickname == '#exit' or nickname == '#e' or '#' in nickname: #check name
+    if nickname == '#show' or nickname == '#s' or nickname == '#help' or nickname == '#h' or nickname == '#exit' or nickname == '#e' or '#' in nickname: #check name
          print("You can't use command and # to be name, Please try again")              
     else:
         host = '127.0.0.1'                                                     #LocalHost
