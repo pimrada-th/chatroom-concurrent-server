@@ -1,4 +1,5 @@
-import socket, threading, datetime,logging                                          #Libraries import
+import socket, threading, datetime,logging,pip._vendor.colorama                              #Libraries import
+
 host = '127.0.0.1'                                                      #LocalHost
 port = 8899                                                            #Choosing unreserved port
 
@@ -32,7 +33,26 @@ def removeuser(user):
     words = '{} Nickname : {} disconnected!\n'.format(date.strftime("%X"),nickname).encode('utf-8')
     print(str(words, 'utf-8')) #convert byte tostring
     broadcast('{} left!\n'.format(nickname).encode('utf-8'))
-    nicknames.remove(nickname)       
+    nicknames.remove(nickname)    
+
+def dm(nickname,user,words):
+    if nickname in nicknames:
+        index = nicknames.index(nickname) #find index of nickname
+        reciever = users[index] #set receiver address
+        sindex = users.index(user)
+        sendername = nicknames[sindex]
+        sendermsg = 'You dm to {} [{}]: {}'.format(nickname,date.strftime("%X"),words).encode('utf-8')
+        receivermsg = '{} dm to you [{}]: {}'.format(sendername,date.strftime("%X"),words).encode('utf-8')
+        user.send(sendermsg)
+        reciever.send(receivermsg)
+        thread = threading.Thread(target=handle, args=(user,))
+        thread.start()
+        print(str(sendermsg))
+        print(str(receivermsg))
+    else:
+        user.send("Sorry, We did't find {} !".format(msg).encode('utf-8'))        
+        thread = threading.Thread(target=handle, args=(user,))
+        thread.start() 
 
 def handle(user):                                         
     while True:
@@ -55,32 +75,9 @@ def handle(user):
                 splitNameAndWords = splitmsg[1].split(',') #result = ['nickname','words']
                 nickname = str(splitNameAndWords[0]) 
                 words = str(splitNameAndWords[1]) 
-                if nickname in nicknames:
-                    print(nickname)
-                    print('inlist')
-                    print(users)
-                    print(nicknames)
-                    index = nicknames.index(nickname) #find index of nickname
-                    reciever = users[index] #set receiver address
-                    sindex = users.index(user)
-                    sendername = nicknames[sindex]
-                    print('The index of sender nicknames:', sindex)
-                    print('The index of receiver nicknames:', index)
-                    #ipsender = user.getpeername()
-                    #ipreciever = users[index].getpeername() #get peername = get ip address
-                    user.send('You dm to {} [{}]: {}'.format(nickname,date.strftime("%X"),words).encode('utf-8'))
-                    #print('Sender : ',ipsender)
-                    #print('Receiver : ',ipreciever)
-                    #user.send('You\'re chatting with {} now!\ninput #e or #exit for back to main chatroom'.format(msg).encode('utf-8'))
-                    dm = '{} dm to you [{}]: {}'.format(sendername,date.strftime("%X"),words)
-                    reciever.send(dm.encode('utf-8'))
-                    thread = threading.Thread(target=handle, args=(user,))
-                    thread.start()
-                else:
-                    user.send("Sorry, We did't find {} !".format(msg).encode('utf-8'))        
-                    thread = threading.Thread(target=handle, args=(user,))
-                    thread.start()
+                dm(nickname,user,words)
                 break
+
             else:
                 broadcast(message)
                 print(msg) #convert byte tostring 

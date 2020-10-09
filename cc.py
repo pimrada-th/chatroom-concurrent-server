@@ -4,18 +4,20 @@ date = datetime.datetime.now()
 timenow = date.strftime('%X')
 def menulist():
     print("""
-        ******** Welcome to Mara's Chatroom ********
+********************************** Welcome to Mara's Chatroom *********************************
             These are command that you can use in Chatroom
-            #show or #s- for show all online users
-            #help or #h - show all menu
-            #exit or #e- exit from this Chatroom
-        ******** Hope you enjoy with my program! ********""")
+            #show or #s- For show all online users
+            #dm - Difect message to user 
+            Dm's Syntax: #dm[nicknameTarget],[your message] Example: #dmken,Hi
+            #help or #h - Show all menu
+            #exit or #e- Exit from this Chatroom
+********************************* Hope you enjoy with my program! *****************************""")
 
 menulist()
 while True:
     nickname = input("What's your Nickname?: ")
-    if nickname == '#show' or nickname == '#s' or nickname == '#help' or nickname == '#h' or nickname == '#show' or nickname == '#exit' or nickname == '#e': #check name
-         print("You can't use command to be name, Please try again")              
+    if nickname == '#show' or nickname == '#s' or nickname == '#help' or nickname == '#h' or nickname == '#show' or nickname == '#exit' or nickname == '#e' or '#' in nickname: #check name
+         print("You can't use command and # to be name, Please try again")              
     else:
         host = '127.0.0.1'                                                     #LocalHost
         port = 8899   
@@ -63,26 +65,29 @@ def write():
             receive_thread.start()   
         
         elif '#dm' in typing:
-            if ',' in typing:
-                if '#dm'+nickname in typing:
-                    print("You can\'t dm to yourself!!")
-                    receive_thread = threading.Thread(target=receive)                  #recieving messages 
-                    receive_thread.start()
-                    write_thread = threading.Thread(target=write)                   #sending messages to server
-                    write_thread.start()
-                else:
-                    user.send(typing.encode('utf-8'))
-                    receive_thread = threading.Thread(target=receive)                  #recieving messages 
-                    receive_thread.start()
-                    write_thread = threading.Thread(target=write)                   #sending messages to server
-                    write_thread.start()
-            else:
-                print("DM syntax must be #dm[nicknameTarget],[your message] Example: #dmken,Hi")
+            if '#dm'+' ' in typing:
+                print("Don't spacebar after #dm please")
                 receive_thread = threading.Thread(target=receive)                  #recieving messages 
                 receive_thread.start()
-                write_thread = threading.Thread(target=write)                   #sending messages to server
-                write_thread.start()
-            break 
+             
+            else:
+                if ',' in typing:
+                    if '#dm'+nickname in typing:
+                        print("You can\'t dm to yourself!!")
+                        receive_thread = threading.Thread(target=receive)                  #recieving messages 
+                        receive_thread.start()
+
+                    else:
+                        user.send(typing.encode('utf-8'))
+                        receive_thread = threading.Thread(target=receive)                  #recieving messages 
+                        receive_thread.start()
+
+                else:
+                    print("DM syntax must be #dm[nicknameTarget],[your message] Example: #dmken,Hi")
+                    receive_thread = threading.Thread(target=receive)                  #recieving messages 
+                    receive_thread.start()
+
+            
 
         else:
             message = '{} [{}]: {}'.format(nickname, timenow, typing)          #message layout
