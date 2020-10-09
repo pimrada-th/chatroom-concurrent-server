@@ -98,3 +98,5 @@ receive_thread.start()
 write_thread = threading.Thread(target=write)                   #sending messages to server
 write_thread.start()
 
+
+

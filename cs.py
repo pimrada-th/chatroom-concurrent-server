@@ -1,4 +1,4 @@
-import socket, threading, datetime,logging,pip._vendor.colorama                              #Libraries import
+import socket, threading, datetime                          #Libraries import
 
 host = '127.0.0.1'                                                      #LocalHost
 port = 8899                                                            #Choosing unreserved port
@@ -105,6 +105,3 @@ def acceptuser():
     finally:
         user.close() 
 acceptuser()
-
-
-        
