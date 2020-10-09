@@ -87,8 +87,6 @@ def write():
                     receive_thread = threading.Thread(target=receive)                  #recieving messages 
                     receive_thread.start()
 
-            
-
         else:
             message = '{} [{}]: {}'.format(nickname, timenow, typing)          #message layout
             user.send(message.encode('utf-8'))   
