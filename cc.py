@@ -1,4 +1,4 @@
-import socket, threading, sys, datetime
+import socket, threading, datetime
 
 date = datetime.datetime.now()
 timenow = date.strftime('%X')
