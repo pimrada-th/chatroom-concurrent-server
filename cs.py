@@ -35,24 +35,24 @@ def removeuser(user):
     broadcast('{} left!\n'.format(nickname).encode('utf-8'))
     nicknames.remove(nickname)    
 
-def dm(nickname,user,words):
-    if nickname in nicknames:
-        index = nicknames.index(nickname) #find index of nickname
+def dm(user,msg):
+    splitmsg= msg.split("#dm") #result = ['','nickname,message']
+    splitNameAndWords = splitmsg[1].split(',') #result = ['nickname','words']
+    recievername = str(splitNameAndWords[0]) #result = nickname
+    words = str(splitNameAndWords[1]) #result = words
+    if recievername in nicknames:
+        index = nicknames.index(recievername) #find index of recievername
         reciever = users[index] #set receiver address
         sindex = users.index(user)
         sendername = nicknames[sindex]
-        sendermsg = 'You dm to {} [{}]: {}'.format(nickname,date.strftime("%X"),words).encode('utf-8')
-        receivermsg = '{} dm to you [{}]: {}'.format(sendername,date.strftime("%X"),words).encode('utf-8')
-        user.send(sendermsg)
-        reciever.send(receivermsg)
-        thread = threading.Thread(target=handle, args=(user,))
-        thread.start()
+        sendermsg = 'You dm to {} [{}]# {}'.format(recievername,date.strftime("%X"),words)
+        receivermsg = '{} dm to you [{}]: {}'.format(sendername,date.strftime("%X"),words)
+        user.send(sendermsg.encode('utf-8'))
+        reciever.send(receivermsg.encode('utf-8'))
         print(str(sendermsg))
         print(str(receivermsg))
     else:
-        user.send("Sorry, We did't find {} !".format(msg).encode('utf-8'))        
-        thread = threading.Thread(target=handle, args=(user,))
-        thread.start() 
+        user.send("Sorry, We did't find {} !".format(recievername).encode('utf-8'))        
 
 def handle(user):                                         
     while True:
@@ -71,11 +71,9 @@ def handle(user):
                 break
 
             elif '#dm' in msg:
-                splitmsg= msg.split("#dm") #result = ['','nickname,message']
-                splitNameAndWords = splitmsg[1].split(',') #result = ['nickname','words']
-                nickname = str(splitNameAndWords[0]) 
-                words = str(splitNameAndWords[1]) 
-                dm(nickname,user,words)
+                dm(user,msg)
+                thread = threading.Thread(target=handle, args=(user,))
+                thread.start()
                 break
 
             else:
