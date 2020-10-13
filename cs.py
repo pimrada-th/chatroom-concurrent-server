@@ -1,4 +1,4 @@
-import socket, threading, datetime                          #Libraries import
+import socket, threading, datetime,random                          #Libraries import
 
 host = '127.0.0.1'                                                      #LocalHost
 port = 8899                                                            #Choosing unreserved port
@@ -10,6 +10,7 @@ server.listen()
 location = (host, port)
 checkstatus = server.connect_ex(location)                               #check that port is using or not
 date = datetime.datetime.now()
+timenow = date.strftime("%X")
 if checkstatus != 0:
     print(date.strftime("%c"))
     print ("Mara's Chatroom server is working!")
@@ -30,9 +31,9 @@ def removeuser(user):
     users.remove(user)
     user.close()
     nickname = nicknames[index]
-    words = '{} Nickname : {} disconnected!\n'.format(date.strftime("%X"),nickname).encode('utf-8')
+    words = '\n{} Nickname : {} disconnected!\n'.format(date.strftime("%X"),nickname).encode('utf-8')
     print(str(words, 'utf-8')) #convert byte tostring
-    broadcast('{} left!\n'.format(nickname).encode('utf-8'))
+    broadcast('\n{} left!\n'.format(nickname).encode('utf-8'))
     nicknames.remove(nickname)    
 
 def dm(user,msg):
@@ -54,11 +55,18 @@ def dm(user,msg):
     else:
         user.send("Sorry, We did't find {} !".format(recievername).encode('utf-8'))        
 
+def userdtails(user,msg):
+    index = users.index(user) #find index of recievername
+    userindex = users[index]            #go user index
+    username = nicknames[index]
+    userdata = userindex.getpeername() #get IP and connecting port
+    user.send('Your nickname : {}\nYour connection details : {}\n'.format(username,userdata).encode('utf-8'))
+
 def handle(user):                                         
     while True:
         try:    
             message = user.recv(1024) #recieving valid messages from user
-            msg = (str(message, 'utf-8'))  
+            msg = (str(message, 'utf-8'))
             if msg=='#exit':
                 removeuser(user)
                 break
@@ -69,13 +77,19 @@ def handle(user):
                 thread = threading.Thread(target=handle, args=(user,))
                 thread.start()
                 break
+            
+            elif msg == '#me':
+                userdtails(user,msg)
+                thread = threading.Thread(target=handle, args=(user,))
+                thread.start()
+                break
 
             elif '#dm' in msg:
                 dm(user,msg)
                 thread = threading.Thread(target=handle, args=(user,))
                 thread.start()
                 break
-
+            
             else:
                 broadcast(message)
                 print(msg) #convert byte tostring 
@@ -84,22 +98,45 @@ def handle(user):
             removeuser(user)
             break
 
+def appendnickname(user,address,nickname):
+    if nickname in nicknames:
+        rd = random.randint(0,99)
+        number = str(rd)
+        nickname = nickname+number
+        nicknames.append(nickname)
+        users.append(user)
+        print("\n{} Nickname : {} ".format(date.strftime("%X"),nickname))                        #send in server
+        print("Connected with {}\n".format(str(address))) 
+        msg = 'Your new nickname is {}'.format(nickname)
+        user.send(msg.encode('utf-8'))
+        user.send('Connected to server! Let\'s chat!\n'.encode('utf-8'))
+        broadcast("{} joined!".format(nickname).encode('utf-8')) 
+        thread = threading.Thread(target=handle, args=(user,))
+        thread.start()              
+    else:    
+        nicknames.append(nickname)
+        users.append(user)
+        print("\n{} Nickname : {} ".format(date.strftime("%X"),nickname))                        #send in server
+        print("Connected with {}\n".format(str(address)))               #send in server
+        user.send('Connected to server! Let\'s chat!\n'.encode('utf-8'))  #send for user
+        broadcast("{} joined!".format(nickname).encode('utf-8')) 
+        thread = threading.Thread(target=handle, args=(user,))
+        thread.start()            #brodcast to all users
+
+
 def acceptuser():   
     try:                                                       
         while True:                                                         #accepting multiple users
-            user, address = server.accept()       
-            user.send('NICKNAME'.encode('utf-8'))
+            user, address = server.accept() 
+            user.send('NICKNAME'.encode('utf-8'))   
             nickname = user.recv(1024).decode('utf-8')
-            nicknames.append(nickname)
-            users.append(user)
-            print("\n{} Nickname : {} ".format(date.strftime("%X"),nickname))                        #send in server
-            print("Connected with {}\n".format(str(address)))               #send in server
-            user.send('Connected to server! Let\'s chat!'.encode('utf-8'))  #send for user
-            broadcast("{} joined!".format(nickname).encode('utf-8'))        #brodcast to all users
-            thread = threading.Thread(target=handle, args=(user,))
-            thread.start()
+            appendnickname(user,address,nickname)
+
+
     except socket.error:
-        print("Shutting down")
+        print("Sorry, Socket error")
     finally:
         user.close() 
 acceptuser()
+
+
