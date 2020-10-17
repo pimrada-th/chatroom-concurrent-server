@@ -22,10 +22,10 @@ def removeuser(user):
     index = users.index(user)
     users.remove(user)
     user.close()
+    nickname = nicknames[index]
     words = '\n{} Nickname : {} disconnected!\n'.format(date.strftime("%X"),nickname).encode('utf-8')
     print(str(words, 'utf-8')) #convert byte tostring
     broadcast('\n{} left!\n'.format(nickname).encode('utf-8'))
-    nickname = nicknames[index]
     nicknames.remove(nickname)    
 
 def dm(user,msg):
