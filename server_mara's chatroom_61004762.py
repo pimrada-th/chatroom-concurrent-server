@@ -1,26 +1,18 @@
 import socket, threading, datetime,random                          #Libraries import
 
 host = '127.0.0.1'                                                      #LocalHost
-port = 8899                                                            #Choosing unreserved port
+port = 8899   
+users = []
+nicknames = []                                                         #Choosing unreserved port
+date = datetime.datetime.now()
+timenow = date.strftime("%X")
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)              #socket initialization
 server.bind((host, port))                                               #binding host and port to socket
 server.listen()
-
-location = (host, port)
-checkstatus = server.connect_ex(location)                               #check that port is using or not
-date = datetime.datetime.now()
-timenow = date.strftime("%X")
-if checkstatus != 0:
-    print(date.strftime("%c"))
-    print ("Mara's Chatroom server is working!")
-    print("Waiting for connecting\n")
-else:
-    print('Sorry! Server can not run\n')
-    
-
-users = []
-nicknames = []
+print(date.strftime("%c"))
+print ("Mara's Chatroom server is working!")
+print("Waiting for connection\n")
 
 def broadcast(message):                                                 #broadcast function declaration
     for user in users:
@@ -30,10 +22,10 @@ def removeuser(user):
     index = users.index(user)
     users.remove(user)
     user.close()
-    nickname = nicknames[index]
     words = '\n{} Nickname : {} disconnected!\n'.format(date.strftime("%X"),nickname).encode('utf-8')
     print(str(words, 'utf-8')) #convert byte tostring
     broadcast('\n{} left!\n'.format(nickname).encode('utf-8'))
+    nickname = nicknames[index]
     nicknames.remove(nickname)    
 
 def dm(user,msg):
@@ -98,9 +90,10 @@ def handle(user):
             removeuser(user)
             break
 
+
 def appendnickname(user,address,nickname):
     if nickname in nicknames:
-        rd = random.randint(0,99)
+        rd = random.randint(5,99)
         number = str(rd)
         nickname = nickname+number
         nicknames.append(nickname)
@@ -131,12 +124,8 @@ def acceptuser():
             user.send('NICKNAME'.encode('utf-8'))   
             nickname = user.recv(1024).decode('utf-8')
             appendnickname(user,address,nickname)
-
-
     except socket.error:
         print("Sorry, Socket error")
-    finally:
-        user.close() 
 acceptuser()
 
 

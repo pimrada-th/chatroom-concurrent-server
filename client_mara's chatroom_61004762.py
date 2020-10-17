@@ -1,5 +1,6 @@
 import socket, threading, datetime
 
+nickname = ''
 date = datetime.datetime.now()
 timenow = date.strftime('%X')
 
@@ -14,11 +15,10 @@ def menulist():
             #help or #h - Show all menu
             #exit or #e- Exit from this Chatroom
 ********************************* Hope you enjoy with my program! *****************************""")
-nickname = ''
 menulist()
 
 while True:
-    print("xxx If you're name already taken, We will put random number for identify yourself xxx")
+    print("xxx If your name already taken, We will add a random number after your nickname for identify yourself xxx")
     nickname = input("Hi! What's your Nickname?: ")
     if '#' in nickname: #check name
          print("You can't use # in your nickname, Please try again")              
