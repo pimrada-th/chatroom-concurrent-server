@@ -1,20 +1,20 @@
-import socket, threading, datetime,random                          #Libraries import
+import socket, threading, datetime,random                                       #Libraries import
 
-host = '127.0.0.1'                                                      #LocalHost
+host = '127.0.0.1'                                                              #LocalHost
 port = 8899   
 users = []
-nicknames = []                                                         #Choosing unreserved port
+nicknames = []                                                         
 date = datetime.datetime.now()
 timenow = date.strftime("%X")
 
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)              #socket initialization
-server.bind((host, port))                                               #binding host and port to socket
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                      #socket initialization
+server.bind((host, port))                                                       #binding host and port to socket
 server.listen()
 print(date.strftime("%c"))
 print ("Mara's Chatroom server is working!")
 print("Waiting for connection\n")
 
-def broadcast(message):                                                 #broadcast function declaration
+def broadcast(message):                                                         #broadcast function declaration
     for user in users:
         user.send(message) 
 
@@ -24,18 +24,18 @@ def removeuser(user):
     user.close()
     nickname = nicknames[index]
     words = '\n{} Nickname : {} disconnected!\n'.format(date.strftime("%X"),nickname).encode('utf-8')
-    print(str(words, 'utf-8')) #convert byte tostring
+    print(str(words, 'utf-8'))                                                  #convert byte tostring
     broadcast('\n{} left!\n'.format(nickname).encode('utf-8'))
     nicknames.remove(nickname)    
 
 def dm(user,msg):
-    splitmsg= msg.split("#dm") #result = ['','nickname,message']
-    splitNameAndWords = splitmsg[1].split(',') #result = ['nickname','words']
-    recievername = str(splitNameAndWords[0]) #result = nickname
-    words = str(splitNameAndWords[1]) #result = words
+    splitmsg= msg.split("#dm")                                                  #result = ['','nickname,message']
+    splitNameAndWords = splitmsg[1].split(',')                                  #result = ['nickname','words']
+    recievername = str(splitNameAndWords[0])                                    #result = nickname
+    words = str(splitNameAndWords[1])                                           #result = words
     if recievername in nicknames:
-        index = nicknames.index(recievername) #find index of recievername
-        reciever = users[index] #set receiver address
+        index = nicknames.index(recievername)                                   #find index of recievername
+        reciever = users[index]                                                 #set receiver address
         sindex = users.index(user)
         sendername = nicknames[sindex]
         sendermsg = 'You dm to {} [{}]# {}'.format(recievername,date.strftime("%X"),words)
@@ -48,17 +48,17 @@ def dm(user,msg):
         user.send("Sorry, We did't find {} !".format(recievername).encode('utf-8'))        
 
 def userdtails(user,msg):
-    index = users.index(user) #find index of recievername
-    userindex = users[index]            #go user index
+    index = users.index(user)                                                   #find index of USER
+    userindex = users[index]                                                    
     username = nicknames[index]
-    userdata = userindex.getpeername() #get IP and connecting port
+    userdata = userindex.getpeername()                                          #get IP and connecting port
     user.send('Your nickname : {}\nYour connection details : {}\n'.format(username,userdata).encode('utf-8'))
 
 def handle(user):                                         
     while True:
         try:    
-            message = user.recv(1024) #recieving valid messages from user
-            msg = (str(message, 'utf-8'))
+            message = user.recv(1024)                                           #recieving valid messages from user
+            msg = (str(message, 'utf-8'))                                       #convert byte tostring 
             if msg=='#exit':
                 removeuser(user)
                 break
@@ -84,7 +84,7 @@ def handle(user):
             
             else:
                 broadcast(message)
-                print(msg) #convert byte tostring 
+                print(msg) 
     
         except:                                                         #ex. user closed window
             removeuser(user)
@@ -98,7 +98,7 @@ def appendnickname(user,address,nickname):
         nickname = nickname+number
         nicknames.append(nickname)
         users.append(user)
-        print("\n{} Nickname : {} ".format(date.strftime("%X"),nickname))                        #send in server
+        print("\n{} Nickname : {} ".format(date.strftime("%X"),nickname))                        
         print("Connected with {}\n".format(str(address))) 
         msg = 'Your new nickname is {}'.format(nickname)
         user.send(msg.encode('utf-8'))
@@ -109,17 +109,16 @@ def appendnickname(user,address,nickname):
     else:    
         nicknames.append(nickname)
         users.append(user)
-        print("\n{} Nickname : {} ".format(date.strftime("%X"),nickname))                        #send in server
-        print("Connected with {}\n".format(str(address)))               #send in server
-        user.send('Connected to server! Let\'s chat!\n'.encode('utf-8'))  #send for user
+        print("\n{} Nickname : {} ".format(date.strftime("%X"),nickname))                        
+        print("Connected with {}\n".format(str(address)))               
+        user.send('Connected to server! Let\'s chat!\n'.encode('utf-8'))  
         broadcast("{} joined!".format(nickname).encode('utf-8')) 
         thread = threading.Thread(target=handle, args=(user,))
-        thread.start()            #brodcast to all users
+        thread.start()           
 
-
-def acceptuser():   
+def acceptuser():                                       #accepting multiple users
     try:                                                       
-        while True:                                                         #accepting multiple users
+        while True:                                                         
             user, address = server.accept() 
             user.send('NICKNAME'.encode('utf-8'))   
             nickname = user.recv(1024).decode('utf-8')

@@ -23,15 +23,15 @@ while True:
     if '#' in nickname: #check name
          print("You can't use # in your nickname, Please try again")              
     else:
-        host = '127.0.0.1'                                                     #LocalHost
+        host = '127.0.0.1'                                                          #LocalHost
         port = 8899   
-        user = socket.socket(socket.AF_INET, socket.SOCK_STREAM)      #socket initialization
-        user.connect((host, port))                                      #connecting user to server
+        user = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                    #socket initialization
+        user.connect((host, port))                                                  #connecting user to server
         break    
 
 def receive():
     global nickname
-    while True:                                                 #making valid connection
+    while True:                                                                     #making valid connection
         try:
             message = user.recv(1024).decode('utf-8')
             if message == 'NICKNAME': #ถ้า NICKNAME ตรงก็ให้ส่งชื่อไปที่เซิฟ
@@ -53,60 +53,60 @@ def write():
         if typing=='#exit' or typing == "#e" :
             check = input('Do you want to exit this chat room? (y,Y = yes, anything = no): ')
             if(check=='y' or check == 'Y' ): 
-                user.send('#exit'.encode('utf-8'))         #ถ้าไม่มีมันจะไม่หยุดทำงงาน
+                user.send('#exit'.encode('utf-8'))                                  
                 user.close()
                 print("You left from chatroom") 
                 break
             else:
                 print("You back to chat room") 
-                receive_thread = threading.Thread(target=receive)                  #recieving messages 
+                receive_thread = threading.Thread(target=receive)                  
                 receive_thread.start()     
         
         elif typing == '#help' or typing == '#h':
             menulist()
-            receive_thread = threading.Thread(target=receive)                  #recieving messages 
+            receive_thread = threading.Thread(target=receive)                      
             receive_thread.start()   
     
         elif typing == '#show' or typing == '#s': 
             user.send('#show'.encode('utf-8'))
             print("--- Online Users ---")
-            receive_thread = threading.Thread(target=receive)                  #recieving messages 
+            receive_thread = threading.Thread(target=receive)                  
             receive_thread.start()   
         
         elif typing == '#me' or typing == '#m': 
             user.send('#me'.encode('utf-8'))
-            print("--- Your details ---")
-            receive_thread = threading.Thread(target=receive)                  #recieving messages 
+            print("--- My details ---")
+            receive_thread = threading.Thread(target=receive)                  
             receive_thread.start()   
         
         elif '#dm' in typing:
             if '#dm'+' ' in typing:
                 print("Don't spacebar after #dm please")
-                receive_thread = threading.Thread(target=receive)                  #recieving messages 
+                receive_thread = threading.Thread(target=receive)                  
                 receive_thread.start()
             else:
                 if ',' in typing:
                     if '#dm'+nickname in typing:
                         print("You can\'t dm to yourself!!")
-                        receive_thread = threading.Thread(target=receive)                  #recieving messages 
+                        receive_thread = threading.Thread(target=receive)                  
                         receive_thread.start()
                     else:
                         user.send(typing.encode('utf-8'))
-                        receive_thread = threading.Thread(target=receive)                  #recieving messages 
+                        receive_thread = threading.Thread(target=receive)                  
                         receive_thread.start()
 
                 else:
                     print("DM syntax must be #dm[nicknameTarget],[your message] Example: #dmken,Hi")
-                    receive_thread = threading.Thread(target=receive)                  #recieving messages 
+                    receive_thread = threading.Thread(target=receive)                  
                     receive_thread.start()
 
         else:
-            message = '{} [{}]: {}'.format(nickname, timenow, typing)          #message layout
+            message = '{} [{}]: {}'.format(nickname, timenow, typing)           #message layout
             user.send(message.encode('utf-8'))   
 
-receive_thread = threading.Thread(target=receive)               #receiving multiple messages
+receive_thread = threading.Thread(target=receive)                               #receiving multiple messages
 receive_thread.start()
-write_thread = threading.Thread(target=write)                   #sending messages to server
+write_thread = threading.Thread(target=write)                                   #sending messages to server
 write_thread.start()
 
 
